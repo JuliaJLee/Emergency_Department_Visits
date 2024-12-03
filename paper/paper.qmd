@@ -176,6 +176,29 @@ The underlying assumption of linearity that multiple linear regression models ho
 
 # Results {#sec-results}
 
+```{r}
+#| echo: false 
+#| message: false
+#| label: fig-familysizedistribution
+#| fig-cap: Number of 2, 3, and 4-person Census Families Across Toronto Neighbourhoods
+
+family_size <- read_parquet(here::here("data/02-analysis_data/analysis_data.parquet"))
+#view(family_size)
+
+# Turn values into numeric data type
+
+family_size$`Neighbourhood Number` = as.numeric(as.character(family_size$`Neighbourhood Number`))
+family_size$`2 persons` = as.numeric(as.character(family_size$`2 persons`))
+family_size$`3 persons` = as.numeric(as.character(family_size$`3 persons`))
+family_size$`4 persons` = as.numeric(as.character(family_size$`4 persons`))
+
+ggplot(family_size, aes(x = "Neighbourhood Name", y = "2 persons")) + 
+  geom_line(linewidth = 0.5, colour="black") + geom_point(colour = "black") +
+ theme_light()  
+  ggtitle("EMS Demand From 2017 to 2022") +
+  labs(x = "Year", y = "Demand for EMS", caption = "Data Source: Toronto Paramedic Services") + 
+  theme(plot.title = element_text(hjust = 0.5)) 
+```
 
 
 # Discussion {#sec-discussion}
