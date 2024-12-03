@@ -34,30 +34,50 @@ library(modelsummary)
 
 # Data {#sec-data}
 
-To simulate, test, download, and clean the Neighbourhoods Profile data, the statistical programming language R was used [@citeR]. Specific libraries that assisted the analysis include `tidyverse` [@tidyverse], `dplyr` [@dplyr], `opendatatoronto` [@opendatatoronto], `tinytex` [@tinytex], `ggplot2` [@ggplot2], `knitr` [@knitr], `testthat` [@testthat], `here` [@here], `arrow` [@arrow], and `modelsummary` [@modelsummary]. 
+To simulate, test, download, and clean the Neighbourhoods Profile data, the statistical programming language R was used [@citeR]. Specific libraries that assisted the analysis include `tidyverse` [@tidyverse], `opendatatoronto` [@opendatatoronto], `tinytex` [@tinytex], `ggplot2` [@ggplot2], `knitr` [@knitr], `testthat` [@testthat], `here` [@here], `arrow` [@arrow], `modelsummary` [@modelsummary], and `sf` [@sf]. 
 
 ## Neighbourhood Profiles Data
 
 Neighbourhood Profiles data for the city of Toronto is provided by the Social Development, Finance & Administration from Toronto’s Open Data portal [@neighbourhoodprofile]. The dataset obtained from the city of Toronto’s Open Data portal [@opentorontodata], is a collection of data from the 2021 Canadian Census from Statistics Canada [@statisticscanada]. Records of socio-economic data for 158 geographic regions (i.e. social planning neighbourhoods) in Toronto can be found within this dataset. From age to ethnocultural diversity, the Census data highlights both the socio-economic and demographic characteristics of Toronto residents across its individual neighbourhoods. 
 
-The Neighbourhood Profiles data is an extensive dataset with each row representing a demographic or socio-economic characteristic and each column reflecting a Toronto neighbourhood. For each neighbourhood, there is information on its name, identification number, and status. Status refers to a neighbourhood’s Toronto Strong Neighbourhoods Strategy (TSNS) designation, which indicates whether a neighbourhood is an emerging area, an area that needs improvement, or neither.  Additionally, data for each neighbourhood’s age population, income, education, and more from the 2021 Census is provided. @tbl-rawdata below offers a preview of this dataset.
+The Neighbourhood Profiles data is an extensive dataset with each row representing a demographic or socio-economic characteristic and each column reflecting a Toronto neighbourhood. For each neighbourhood, there is information on its name, identification number, and status. Status refers to a neighbourhood’s Toronto Strong Neighbourhoods Strategy (TSNS) designation, which indicates whether a neighbourhood is an emerging area, an area that needs improvement, or neither.  Additionally, data for each neighbourhood’s age population, income, education, and more from the 2021 Census is provided. @tbl-rawdata below offers a small preview of this dataset.
+
+```{r}
+#| echo: false
+#| message: false
+#| label: tbl-rawdata
+#| tbl-cap: "Toronto Neighbourhood Profiles Data" 
+
+raw_data <- read_csv(here::here("data/01-raw_data/raw_data.csv"))
+#view(raw_data)
+
+for_show <- raw_data[,c(2,3)]
+#view(for_show)
+
+for_show |>
+  slice(1:6) |>
+  kable(
+    col.names = c("Neigbourhood Name", "West Humber-Clairville"),
+    digits = 1,
+    linesep = "",
+    align = c("l", "l")
+  )
+```
 
 
-
-
-@tbl-rawdata displays neighbourhood names, numbers, and TSNS designations along with data for the number of individuals within different age groups in each neighbourhood. For example, Thistletown-Beaumond Heights is a neighbourhood in Toronto that needs improvement and has a fairly large number of children ages 0 to 14 years old. The rest of the dataset follows the same format, displaying different characteristics of all 158 neighbourhoods in the city of Toronto.
+@tbl-rawdata displays the name, number, and TSNS designation along with data for the number of individuals within different age groups for a neighbourhood (West Humber-Clairville) in Toronto. By looking at @tbl-rawdata, West Humber-Clairville is a neighbourhood that is not an emerging area and one that does not need improvement. It is also a region with a fairly large number of children ages 0 to 14 years old. The rest of the dataset follows the same format, displaying different characteristics (e.g. older age groups, education attainment, income levels, etc.) of all 158 neighbourhoods in the city of Toronto.
 
 ## Analysis Data
 	
-For the present analysis, the variables of interest are the different types of census family sizes along with the average after-tax income for each of Toronto’s neighbourhoods. The Neighbourhood Profiles data includes four different census family sizes: (1) 2-person families, (2) 3-person families, (3) 4-person families, and (4) five or more-person families. It also provides the average after-tax income ($) recorded in 2020 for each neighbourhood.  
+For the present analysis, the variables of interest are the different types of census family sizes along with the average after-tax income for each of Toronto’s neighbourhoods. The Neighbourhood Profiles data includes four different census family sizes: (1) 2-person families, (2) 3-person families, (3) 4-person families, and (4) five or more-person families. In simple terms, Statistics Canada defines a census family as one where all family members (related by blood marriage, common-law union, adoption, or a foster relationship) live together in the same dwelling [@censusdefinition]. Census families can also be referred to as economic families [@economicdefinition]. The data further provides the average after-tax income ($) recorded in 2020 for each neighbourhood.  
 
-Since the objective is to find out what kinds of families are driving average neighbourhood income in Toronto, the data used throughout this analysis reflects the average income level for all 158 neighbourhoods alongside their counts of different census family sizes. With minimal data wrangling, the analysis data is simply an extraction of the larger dataset with a focus on the different family sizes and average after-tax income. @tbl-analysis below illustrates this analysis data for three neighbourhoods and summary statistics for this data can be found in the Appendix (@sec-appendix). 
+Since the objective is to find out what kinds of families are driving average neighbourhood income in Toronto, the data used throughout this analysis reflects the average income level for all 158 neighbourhoods alongside their counts of different census family sizes. With minimal data wrangling, the analysis data is simply an extraction of the larger dataset with a focus on the different family sizes and average after-tax income. @tbl-analysis below illustrates this analysis data for three neighbourhoods and summary statistics for this data can be found in the Appendix (@sec-appendixsummary). 
 
 ```{r}
 #| echo: false
 #| message: false
 #| label: tbl-analysis
-#| tbl-cap: "Toronto Neighbourhood Profiles Data"
+#| tbl-cap: "Toronto Neighbourhood Profiles Analysis Data"
 
 analysis <- read_parquet(here::here("data/02-analysis_data/analysis_data.parquet"))
 #view(analysis)
@@ -71,7 +91,7 @@ for_table |>
                   "4 persons", "5 or more persons", "Average Income"),
     digits = 1,
     linesep = "",
-    align = c("l", "l", "c", "c", "c", "c", "c")
+    align = c("l", "c", "c", "c", "c", "c", "c")
   )
 ```
 
@@ -79,9 +99,38 @@ In @tbl-analysis, the “Name” column represents each neighbourhood’s name, 
 
 ## Map Data
 
-To further understand the type of families that drive average neighbourhood income, this analysis also uses Neighbourhoods data – a shapefile that contains geographic information of Toronto neighbourhood boundaries – to map the results of its model. The boundaries of each neighbourhood are defined using census tract information provided by Statistics Canada, and the shapefile itself is published by the Social Development, Finance & Administration from Toronto’s Open Data portal [@socialdevelopment]. The map within this analysis is created using ArcGIS Pro software [@arcgis]. By joining the analysis data shown in @tbl-analysis with the shapefile based on neighbourhood names, a map that highlights the distribution of family sizes that drive average neighbourhood income is built. The information contained in the shapefile is shown below in @tbl-mapdata. 
+To further understand the type of families that drive average neighbourhood income, this analysis also uses Neighbourhoods data – a shapefile that contains geographic information of Toronto neighbourhood boundaries – to map the results of its model. The boundaries of each neighbourhood are defined using census tract information provided by Statistics Canada, and the shapefile itself is published by the Social Development, Finance & Administration from Toronto’s Open Data portal [@socialdevelopment]. The map within this analysis is created using ArcGIS Pro software [@arcgis]. By joining the analysis data shown in @tbl-analysis with the shapefile based on neighbourhood names, a map that highlights the distribution of family sizes that drive average neighbourhood income can be created. The information contained in the shapefile is shown below in @tbl-mapdata. 
 
-The Neighbourhoods shapefile data contains neighbourhood names, numbers, and TSNS designations similar to the Neighbourhood Profiles data. It also includes geographic information (i.e. Shape_Length and Shape_Area) that defines the boundaries of each neighbourhood. 
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| label: tbl-mapdata
+#| tbl-cap: "Toronto Neighbourhood Location & Boundaries Data" 
+
+library(sf)
+
+map_data <- st_read("~/Toronto_Neighbourhood_Income/data/03-map_data", quiet=TRUE)
+#view(map_data)
+
+for_illustration <- map_data[,c(1,6,7,9)]
+#view(for_illustration)
+
+for_illustration |>
+  slice(1:3) |>
+  kable(
+    col.names = c("Object ID", "Neighbourhood Number", "Neighbourhood Name", 
+                  "TSNS Designation", "Geometry"),
+    digits = 1,
+    booktabs = TRUE,
+    linesep = "",
+    align = c("l", "l", "l", "l", "l"),
+    format.args = list(big.mark = ",")
+  )
+```
+
+
+The Neighbourhoods shapefile data contains neighbourhood names, numbers, and TSNS designations similar to the Neighbourhood Profiles data (@tbl-rawdata). It also includes geographic information (i.e. the geometry/coordinates of a neighbourhood) that defines the boundaries of each neighbourhood as shown in @tbl-mapdata. 
 
 ## A Note on Measurement 
 
@@ -89,7 +138,7 @@ The Neighbourhood Profiles data is a reflection of the 2021 Census for neighbour
 
 So, various aspects of families’ livelihoods are measured through the Census and aggregated to create an overall picture of particular geographic regions – in this case, Toronto neighbourhoods. It is important to note that through this measurement process, there is room for error as well as a need to be aware of this potential for error. Missing data values can be imputed and the aggregation of individual household characteristics or experiences can lead to incorrect assumptions about certain regions and their populations. Thus, this analysis presents its findings with this in mind. 
 
-# Model
+# Model {#sec-model}
 
 
 ## Model set-up
@@ -137,59 +186,43 @@ y_i|\mu_i, \sigma &\sim \mbox{Normal}(\mu_i, \sigma) \\
 
 # Appendix {#sec-appendix}
 
-## Analysis Data Summary Statistics 
-
-
-
-# Model details {#sec-model-details}
-
-## Posterior predictive check
-
-In @fig-ppcheckandposteriorvsprior-1 we implement a posterior predictive check. This shows...
-
-In @fig-ppcheckandposteriorvsprior-2 we compare the posterior with the prior. This shows... 
-
-```{r}
-#| eval: true
-#| echo: false
-#| message: false
-#| warning: false
-#| label: fig-ppcheckandposteriorvsprior
-#| layout-ncol: 2
-#| fig-cap: "Examining how the model fits, and is affected by, the data"
-#| fig-subcap: ["Posterior prediction check", "Comparing the posterior with the prior"]
-
-pp_check(first_model) +
-  theme_classic() +
-  theme(legend.position = "bottom")
-
-posterior_vs_prior(first_model) +
-  theme_minimal() +
-  scale_color_brewer(palette = "Set1") +
-  theme(legend.position = "bottom") +
-  coord_flip()
-```
-
-## Diagnostics
-
-@fig-stanareyouokay-1 is a trace plot. It shows... This suggests...
-
-@fig-stanareyouokay-2 is a Rhat plot. It shows... This suggests...
+## Analysis Data Summary Statistics {#sec-appendixsummary}
 
 ```{r}
 #| echo: false
-#| eval: true
 #| message: false
-#| warning: false
-#| label: fig-stanareyouokay
-#| fig-cap: "Checking the convergence of the MCMC algorithm"
-#| fig-subcap: ["Trace plot", "Rhat plot"]
-#| layout-ncol: 2
+#| label: tbl-summarystatistics
+#| tbl-cap: "Toronto Neighbourhood Profiles Data Summary Statistics" 
 
-plot(first_model, "trace")
+summary_data <- read_parquet(here::here("data/02-analysis_data/analysis_data.parquet"))
+#view(summary_data)
 
-plot(first_model, "rhat")
+for_summary <- summary_data[,c(4,5,6,7,10)]
+#view(for_summary)
+
+# Turn values into numeric data type
+
+for_summary$`2 persons` = as.numeric(as.character(for_summary$`2 persons`))
+for_summary$`3 persons` = as.numeric(as.character(for_summary$`3 persons`))
+for_summary$`4 persons` = as.numeric(as.character(for_summary$`4 persons`))
+for_summary$`5 or more persons` = as.numeric(as.character(for_summary$`5 or more persons`))
+for_summary$`Average after-tax income of economic family in 2020 ($)` = as.numeric(as.character(for_summary$`Average after-tax income of economic family in 2020 ($)`))
+
+final_summary <- summary(for_summary)
+#view(final_summary)
+
+final_summary |>
+    kable(
+    col.names = c("2-person Families", "3-person Families", "4-person Families",
+                  "5 or more-person Families", "Average Income"),
+    digits = 1,
+    booktabs = TRUE,
+    linesep = "",
+    align = c("l", "l", "l", "l", "l"),
+  )
 ```
+
+@tbl-summarystatistics presents the summary statistics for each census family size and the average after-tax income across all 158 neighbourhoods in Toronto. 
 
 
 
