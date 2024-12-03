@@ -1,26 +1,44 @@
 #### Preamble ####
-# Purpose: Downloads and saves the data from [...UPDATE THIS...]
-# Author: Rohan Alexander [...UPDATE THIS...]
-# Date: 11 February 2023 [...UPDATE THIS...]
-# Contact: rohan.alexander@utoronto.ca [...UPDATE THIS...]
+# Purpose: Download and save the actual Neighbourhood Profiles data
+# from Open Data Toronto
+# Author: Julia Lee
+# Date: 28 November 2024
+# Contact: jlee.lee@mail.utoronto.ca
 # License: MIT
-# Pre-requisites: [...UPDATE THIS...]
-# Any other information needed? [...UPDATE THIS...]
+# Pre-requisites: None
+# Any other information needed? N/A
 
 
-#### Workspace setup ####
+#### Setting Up the Workspace ####
+
 library(opendatatoronto)
 library(tidyverse)
-# [...UPDATE THIS...]
+library(dplyr)
 
-#### Download data ####
-# [...ADD CODE HERE TO DOWNLOAD...]
+#### Downloading the Data #### 
 
+package <- show_package("6e19a90f-971c-46b3-852c-0c48c436d1fc")
 
+resources <- list_package_resources("6e19a90f-971c-46b3-852c-0c48c436d1fc")
 
-#### Save data ####
-# [...UPDATE THIS...]
-# change the_raw_data to whatever name you assigned when you downloaded it.
-write_csv(the_raw_data, "inputs/data/raw_data.csv") 
+datastore_resources <- filter(resources, tolower(format) %in% c('xlsx'))
 
+raw_data <- filter(datastore_resources, row_number()==1) %>% 
+  get_resource()
+
+raw_data
+
+# The xlsx file from Open Data Toronto has two sheets: one for the actual 
+# data and another for metadata
+# So, will need to save only the sheet with the actual data by creating 
+# a dataframe for it
+
+# Dataframe for Neighbourhood Profiles data
+
+neighbourhood_profiles <- raw_data$hd2021_census_profile
+#view(neighbourhood_profiles)
+
+#### Saving the Data ####
+
+write.csv(neighbourhood_profiles, file = "data/01-raw_data/raw_data.csv")
          
