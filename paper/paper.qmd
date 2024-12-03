@@ -140,41 +140,47 @@ So, various aspects of families’ livelihoods are measured through the Census a
 
 # Model {#sec-model}
 
+To understand the types of families that drive average neighbourhood income, this analysis constructs a multiple linear regression model using R [@citeR] that considers average neighbourhood income as the response variable and the different census family sizes as predictors. As mentioned in @sec-data, the average neighbourhood income variable reflects the average after-tax income of all census families for each neighbourhood in 2020 (recorded in dollars). Different family sizes (i.e. 2 to 5 or more-person families) refer the number of family members that live in the same dwelling within each individual neighbourhood. With this, the final model within this analysis is structured as follows: 
 
-## Model set-up
+$$
+\hat{y} = b_0 + b_1 \cdot x_1 + b_2 \cdot x_2 + b_3 \cdot x_3 + \epsilon
+$$
 
-Define $y_i$ as the number of seconds that the plane remained aloft. Then $\beta_i$ is the wing width and $\gamma_i$ is the wing length, both measured in millimeters.  
+where
 
-\begin{align} 
-y_i|\mu_i, \sigma &\sim \mbox{Normal}(\mu_i, \sigma) \\
-\mu_i &= \alpha + \beta_i + \gamma_i\\
-\alpha &\sim \mbox{Normal}(0, 2.5) \\
-\beta &\sim \mbox{Normal}(0, 2.5) \\
-\gamma &\sim \mbox{Normal}(0, 2.5) \\
-\sigma &\sim \mbox{Exponential}(1)
-\end{align}
+-   $\hat{y}$ represents the average neighbourhood after-tax income,
 
+-   $b_0$ represents the intercept of the regression model,
+
+-   $b_1$ represents the effect of two-person census families,
+
+-   $x_1$ represents the number of two-person census families,
+
+-   $b_2$ represents the effect of three-person census families,
+
+-   $x_2$ represents the number of three-person census families,
+
+-   $b_3$ represents the effect of four-person census families,
+
+-   $x_3$ represents the number of four-person census families,
+
+-   $\epsilon$ captures the error within the regression model
+
+It is important to highlight that as a result of model selection and individual predictor t-tests, families with 5 or more members are not considered in the final model. The impact of 2, 3, and 4-person families on average neighbourhood income across Toronto neighbourhoods are examined through this model. 
 
 ## Model justification
 
+As the objective of the analysis is to understand what might be driving the average neighbourhood income in terms of family size, a multiple linear regression will allow for an examination of the relationship between different census family sizes and average income. By striving to preserve the interpretability of the model, this analysis can further determine which family sizes are meaningful influencers of a neighbourhood’s average after-tax income. 
 
-## Model Validation
+The underlying assumption of linearity that multiple linear regression models hold can be a potential limitation as these models will not be able accurately explain the influence of predictors on a response variable if these variables have a non-linear relationship with each other. The use of a multiple linear regression may not be the best choice in these cases. However, with average neighbourhood income and increasing census family sizes, the model’s diagnostic plots provide evidence for linearity, meaning that the use of a multiple linear regression model can be suitable for this analysis. Further justification and validation for the model can be found in the Appendix (@sec-appendixmodel).
 
-
-
-# Results
-
+# Results {#sec-results}
 
 
-# Discussion
 
-## First discussion point {#sec-first-point}
-
-
-## Second discussion point
+# Discussion {#sec-discussion}
 
 
-## Third discussion point
 
 ## Limiations & Future Directions
 
@@ -224,10 +230,147 @@ final_summary |>
 
 @tbl-summarystatistics presents the summary statistics for each census family size and the average after-tax income across all 158 neighbourhoods in Toronto. 
 
+## Model Validation {#sec-appendixmodel}
 
+The construction of a model for this analysis began by fitting an initial model with average neighbourhood income as the response variable and 2, 3, 4, and 5 or more-person families as predictors. As seen by @tbl-initialmodel and the individual t-tests, 5 or more-person families do not appear to significantly impact a neighbourhood’s average income with the largest p-value among all predictors (p > 0.001). 
+
+```{r}
+#| warning: false
+#| echo: false
+#| label: tbl-initialmodel
+#| tbl-cap: "Summary Table of the Initial Model"
+
+model_data <- read_parquet(here::here("data/02-analysis_data/analysis_data.parquet"))
+#view(model_data)
+
+# Fitting the initial regression model
+
+## Changing column names
+
+regression_data <-
+  model_data |>
+  rename(
+    neighbourhood_name = "Neighbourhood Name",
+    neighbourhood_num = "Neighbourhood Number",
+    num_census_fam = "Total - Census families in private households by family size - 25% sample data",
+    size_two = "2 persons",
+    size_three = "3 persons",
+    size_four = "4 persons",
+    size_five_plus = "5 or more persons",
+    avg_fam_size = "Average size of census families",
+    avg_num_child = "Average number of children in census families with children",
+    avg_income = "Average after-tax income of economic family in 2020 ($)"
+  )
+
+#view(regression_data)
+
+## Turn columns into numerical vectors
+## Hints for the code of this step were provided by:
+## https://stackoverflow.com/questions/61260686/too-many-coefficients-with-lm
+
+regression_data$size_two = as.numeric(as.character(regression_data$size_two))
+regression_data$size_three = as.numeric(as.character(regression_data$size_three))
+regression_data$size_four = as.numeric(as.character(regression_data$size_four))
+regression_data$size_five_plus = as.numeric(as.character(regression_data$size_five_plus))
+regression_data$avg_income = as.numeric(as.character(regression_data$avg_income))
+
+initial_model <- lm(avg_income ~ size_two + size_three + size_four + 
+                      size_five_plus, data = regression_data)
+
+modelsummary(initial_model, statistic = "{std.error} ({p.value})")
+```
+
+So, another model was created without this variable (i.e. a reduced model), and all predictors seem to have significant impacts (p < 0.001) on neighbourhood income as shown in @tbl-newmodel.
+
+```{r}
+#| warning: false
+#| echo: false
+#| label: tbl-newmodel
+#| tbl-cap: "Summary Table of the Reduced Model"
+
+model <- readRDS(here("model/model_1.rds"))
+
+modelsummary(model, statistic = "{std.error} ({p.value})")
+```
+
+Model selection was further conducted by comparing the BIC scores of both models (shown in @tbl-bic). As the new model has a lower BIC score, this is the one that is used within the analysis and outlined in @sec-model.
+
+```{r}
+#| echo: false
+#| message: false
+#| label: tbl-bic
+#| tbl-cap: "BIC Scores for Initial and Reduced Models" 
+
+bic_scores <-
+  tibble(
+    Model = c("Initial", "Reduced"),
+    BIC = c(BIC(initial_model), BIC(model))
+  )
+
+#view(bic_scores)
+
+bic_scores |>
+    kable(
+    col.names = c("Model", "BIC Score"),
+    digits = 1,
+    booktabs = TRUE,
+    linesep = "",
+    align = c("c", "c"),
+)
+```
+
+The purpose of the model is to be able to interpret the coefficient estimates and what they mean in terms of influencing average neighbourhood income. For this reason, transformations (e.g. log transformations on predictor variables) were not applied to the data even with the presence of some evidence against the linear regression model assumptions. 
+
+Looking at the diagnostic plots (@fig-residualsandpredictors), the lack of observational patterns in the Residuals vs Predictor plots for 2, 3, and 4-person families points to evidence for the linearity assumption of linear regression models. 
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+#| label: fig-residualsandpredictors
+#| fig-cap: Showing the Residual vs. Predictors
+
+residuals_1 <- model$residuals
+#summary(residuals_1)
+
+par(mfrow=c(1,3))
+plot(residuals_1 ~ regression_data$size_two, main = "Residuals vs 2-person Families", 
+     xlab = "Number of 2-person Families", ylab = "Residuals")
+plot(residuals_1 ~ regression_data$size_three, main = "Residuals vs 3-person Families", 
+     xlab = "Number of 3-person Families", ylab = "Residuals")
+plot(residuals_1 ~ regression_data$size_four, main = "Residuals vs 4-person Families", 
+     xlab = "Number of 4-person Families", ylab = "Residuals")
+```
+The Residual vs Fitted Values plot (@fig-residualsandfitted) seems to have some clustering of points, indicating that the constant variance and independence assumptions are somewhat satisfied. However, because the overall pattern of the plot is still relatively spread out with no observable patterns, and as the objective of the model is interpretability, transformations were not applied to the variables in the model to better these assumptions. 
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+#| label: fig-residualsandfitted
+#| fig-cap: Showing the Residual vs. Fitted Values
+
+fitted_1 <- model$fitted.values
+#summary(fitted_1)
+
+plot(residuals_1 ~ fitted_1, main = "Residuals vs Fitted Values", 
+     xlab = "Fitted Values", ylab = "Residuals")
+abline(h = 0, col ="red")
+```
+Lastly, though the Normal Q-Q plot (@fig-normal) shows some deviation from the Q-Q line, the normality assumption is somewhat satisfied with little evidence to suggest an alarming violation of this assumption. Putting all this together, while improvements can be made to the model for better, more accurate predictions, it is sufficient for the purpose of interpretability.  
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+#| label: fig-normal
+#| fig-cap: Showing the Normal Q-Q Plot
+
+qqnorm(residuals_1)
+qqline(residuals_1)
+```
 
 \newpage
-
 
 # References
 
