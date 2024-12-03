@@ -1,89 +1,79 @@
 #### Preamble ####
-# Purpose: Tests the structure and validity of the simulated Australian 
-  #electoral divisions dataset.
-# Author: Rohan Alexander
-# Date: 26 September 2024
-# Contact: rohan.alexander@utoronto.ca
+# Purpose: Test the simulated Neighbourhood Profiles data 
+# Author: Julia Lee
+# Date: 28 November 2024 
+# Contact: jlee.lee@mail.utoronto.ca
 # License: MIT
-# Pre-requisites: 
-  # - The `tidyverse` package must be installed and loaded
-  # - 00-simulate_data.R must have been run
-# Any other information needed? Make sure you are in the `starter_folder` rproj
+# Pre-requisites: Simulate the Neighbourhood Profiles data 
+# Any other information needed? N/A
 
 
-#### Workspace setup ####
+#### Setting Up the Workspace ####
+
 library(tidyverse)
+library(testthat)
+library(dplyr)
 
-analysis_data <- read_csv("data/00-simulated_data/simulated_data.csv")
+#### Testing the Data ####
 
-# Test if the data was successfully loaded
-if (exists("analysis_data")) {
+# Read in the simulated data
+
+data <- read_csv("data/00-simulated_data/simulated_data.csv")
+#view(data)
+
+# (1) Test if the data was successfully loaded
+
+if (exists("simulated_data")) {
   message("Test Passed: The dataset was successfully loaded.")
 } else {
   stop("Test Failed: The dataset could not be loaded.")
 }
 
+# (2) Test for missing values and negative values
 
-#### Test data ####
+test_that("There are no missing values", {
+  expect_true(!all(is.na(data)))})
 
-# Check if the dataset has 151 rows
-if (nrow(analysis_data) == 151) {
-  message("Test Passed: The dataset has 151 rows.")
+test_that("There are no negative values", {
+  expect_true(!all(data < 0))})
+
+# (3) Test if the data has 20 rows (i.e. 20 neighbourhoods)
+
+if (nrow(data) == 20) {
+  message("Test Passed: The dataset has 20 rows.")
 } else {
-  stop("Test Failed: The dataset does not have 151 rows.")
+  stop("Test Failed: The dataset does not have 20 rows.")
 }
 
-# Check if the dataset has 3 columns
-if (ncol(analysis_data) == 3) {
-  message("Test Passed: The dataset has 3 columns.")
+# (4) Test if the data has 10 columns 
+
+if (ncol(data) == 10) {
+  message("Test Passed: The dataset has 10 columns.")
 } else {
-  stop("Test Failed: The dataset does not have 3 columns.")
+  stop("Test Failed: The dataset does not have 10 columns.")
 }
 
-# Check if all values in the 'division' column are unique
-if (n_distinct(analysis_data$division) == nrow(analysis_data)) {
-  message("Test Passed: All values in 'division' are unique.")
-} else {
-  stop("Test Failed: The 'division' column contains duplicate values.")
-}
+# (5) Test if data values are in the correct data type
 
-# Check if the 'state' column contains only valid Australian state names
-valid_states <- c("New South Wales", "Victoria", "Queensland", "South Australia", 
-                  "Western Australia", "Tasmania", "Northern Territory", 
-                  "Australian Capital Territory")
+data$neighbourhood_name |> class() == "character"
+data$neighbourhood_number |> class() == "numeric"
+data$num_census_fam |> class() == "numeric"
+data$two_person_fam |> class() == "numeric"
+data$three_person_fam |> class() == "numeric"
+data$four_person_fam |> class() == "numeric"
+data$five_plus_person_fam |> class() == "numeric"
+data$avg_fam_size |> class() == "numeric"
+data$avg_num_children |> class() == "numeric"
+data$avg_income |> class() == "numeric"
 
-if (all(analysis_data$state %in% valid_states)) {
-  message("Test Passed: The 'state' column contains only valid Australian state names.")
-} else {
-  stop("Test Failed: The 'state' column contains invalid state names.")
-}
+# (6) Test for unique neighbourhood names
 
-# Check if the 'party' column contains only valid party names
-valid_parties <- c("Labor", "Liberal", "Greens", "National", "Other")
+test_that("Neighbourhood names are unique", {
+  expect_true(n_distinct(data$neighbourhood_name) == nrow(data))
+})
 
-if (all(analysis_data$party %in% valid_parties)) {
-  message("Test Passed: The 'party' column contains only valid party names.")
-} else {
-  stop("Test Failed: The 'party' column contains invalid party names.")
-}
+# (6) Test for unique neighbourhood numbers
 
-# Check if there are any missing values in the dataset
-if (all(!is.na(analysis_data))) {
-  message("Test Passed: The dataset contains no missing values.")
-} else {
-  stop("Test Failed: The dataset contains missing values.")
-}
-
-# Check if there are no empty strings in 'division', 'state', and 'party' columns
-if (all(analysis_data$division != "" & analysis_data$state != "" & analysis_data$party != "")) {
-  message("Test Passed: There are no empty strings in 'division', 'state', or 'party'.")
-} else {
-  stop("Test Failed: There are empty strings in one or more columns.")
-}
-
-# Check if the 'party' column has at least two unique values
-if (n_distinct(analysis_data$party) >= 2) {
-  message("Test Passed: The 'party' column contains at least two unique values.")
-} else {
-  stop("Test Failed: The 'party' column contains less than two unique values.")
-}
+test_that("Neighbourhood numbers are unique", {
+  expect_true(n_distinct(data$neighbourhood_number) == nrow(data))
+})

@@ -4,7 +4,7 @@
 # Date: 28 November 2024
 # Contact: jlee.lee@mail.utoronto.ca
 # License: MIT
-# Pre-requisites: Review the plan and sketches for the analysis in the "plan" folder
+# Pre-requisites: Review plan and sketches for the analysis in the "plan" folder
 # Any other information needed? N/A
 
 
@@ -17,22 +17,27 @@ library(tidyverse)
 set.seed(059)
 
 # Want to create a table that shows the total number of census families, 
-# the number of 2-person, 3-person, 4-person, and 5-person families, the average size
-# of census families, the average number of children in census families, and the average
-# after-tax income of census families for each neighbourhood in Toronto
+# the number of 2-person, 3-person, 4-person, and 5-person families, the 
+# average size of census families, the average number of children in census 
+# families, and the average after-tax income of census families for each 
+# neighbourhood in Toronto
 
-## Define Toronto neighbourhoods - for the purposes of simulation, will only include names
-# and numbers for 20 Toronto neighbourhoods out of 158
+## Define Toronto neighbourhoods - for the purposes of simulation, will 
+# only include names and numbers for 20 Toronto neighbourhoods out of 158
 
-neighbourhood_names = c("West Humber-Clairville", "Mount Olive-Silverstone-Jamestown",
-                        "Thistletown-Beaumond Heights", "Rexdale-Kipling", "Elms-Old Rexdale",
-                        "Kingsview Village-The Westway", "Willowridge-Martingrove-Richview",
+neighbourhood_names <- c("West Humber-Clairville", 
+                         "Mount Olive-Silverstone-Jamestown",
+                        "Thistletown-Beaumond Heights", "Rexdale-Kipling", 
+                        "Elms-Old Rexdale", "Kingsview Village-The Westway", 
+                        "Willowridge-Martingrove-Richview", 
                         "Humber Heights-Westmount", "Edenbridge-Humber Valley",
-                        "Princess-Rosethorn", "Eringate-Centennial-West Deane", "Markland Wood",
-                        "Etobicoke West Mall", "Kingsway South", "Stonegate-Queensway", "New Toronto",
-                        "Long Branch", "Alderwood", "Humber Summit", "Humbermede")
+                        "Princess-Rosethorn", "Eringate-Centennial-West Deane", 
+                        "Markland Wood", "Etobicoke West Mall", 
+                        "Kingsway South", "Stonegate-Queensway", "New Toronto",
+                        "Long Branch", "Alderwood", "Humber Summit", 
+                        "Humbermede")
 
-neighbourhood_number = c(1:20)
+neighbourhood_number <- c(1:20)
 
 ## Creating values for each of the 20 neighbourhoods
 
