@@ -72,7 +72,7 @@ test_that("Neighbourhood names are unique", {
   expect_true(n_distinct(data$neighbourhood_name) == nrow(data))
 })
 
-# (6) Test for unique neighbourhood numbers
+# (7) Test for unique neighbourhood numbers
 
 test_that("Neighbourhood numbers are unique", {
   expect_true(n_distinct(data$neighbourhood_number) == nrow(data))

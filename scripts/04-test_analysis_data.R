@@ -1,69 +1,90 @@
 #### Preamble ####
-# Purpose: Tests... [...UPDATE THIS...]
-# Author: Rohan Alexander [...UPDATE THIS...]
-# Date: 26 September 2024 [...UPDATE THIS...]
-# Contact: rohan.alexander@utoronto.ca [...UPDATE THIS...]
+# Purpose: Test the cleaned Neighbourhood Profiles data 
+# Author: Julia Lee
+# Date: 28 November 2024 
+# Contact: jlee.lee@mail.utoronto.ca
 # License: MIT
-# Pre-requisites: [...UPDATE THIS...]
-# Any other information needed? [...UPDATE THIS...]
+# Pre-requisites: Download and clean the Neighbourhood Profiles data 
+# Any other information needed? N/A
 
 
-#### Workspace setup ####
+#### Setting Up the Workspace ####
+
 library(tidyverse)
 library(testthat)
+library(dplyr)
+library(arrow)
+library(here)
 
-data <- read_csv("data/02-analysis_data/analysis_data.csv")
+#### Testing the Data ####
 
+# Read in the analysis data
 
-#### Test data ####
-# Test that the dataset has 151 rows - there are 151 divisions in Australia
-test_that("dataset has 151 rows", {
-  expect_equal(nrow(analysis_data), 151)
+testing_clean_data <- read_parquet(here::here("data/02-analysis_data/analysis_data.parquet"))
+#view(testing_clean_data)
+
+# (1) Test if the data was successfully loaded
+
+if (exists("analysis_data")) {
+  message("Test Passed: The dataset was successfully loaded.")
+} else {
+  stop("Test Failed: The dataset could not be loaded.")
+}
+
+# (2) Test for missing values and negative values
+
+test_that("There are no missing values", {
+  expect_true(!all(is.na(testing_clean_data)))})
+
+test_that("There are no negative values", {
+  expect_true(!all(testing_clean_data < 0))})
+
+# (3) Test if the data has 158 rows (i.e. 158 neighbourhoods)
+
+if (nrow(testing_clean_data) == 158) {
+  message("Test Passed: The dataset has 158 rows.")
+} else {
+  stop("Test Failed: The dataset does not have 158 rows.")
+}
+
+# (4) Test if the data has 10 columns 
+
+if (ncol(testing_clean_data) == 10) {
+  message("Test Passed: The dataset has 10 columns.")
+} else {
+  stop("Test Failed: The dataset does not have 10 columns.")
+}
+
+# (5) Test if data values are in the correct data type
+
+testing_clean_data$`Neighbourhood Name` |> class() == "character"
+
+testing_clean_data$`Neighbourhood Number` |> class() == "character"
+
+testing_clean_data$`Total - Census families in private households by family size - 25% sample data` |> class() == "character"
+
+testing_clean_data$`2 persons` |> class() == "character"
+
+testing_clean_data$`3 persons` |> class() == "character"
+
+testing_clean_data$`4 persons` |> class() == "character"
+
+testing_clean_data$`5 or more persons` |> class() == "character"
+
+testing_clean_data$`Average size of census families` |> class() == "character"
+
+testing_clean_data$`Average number of children in census families with children` |> class() == "character"
+
+testing_clean_data$`Average after-tax income of economic family in 2020 ($)` |> class() == "character"
+
+# (6) Test for unique neighbourhood names
+
+test_that("Neighbourhood names are unique", {
+  expect_true(n_distinct(testing_clean_data$`Neighbourhood Name`) == nrow(testing_clean_data))
 })
 
-# Test that the dataset has 3 columns
-test_that("dataset has 3 columns", {
-  expect_equal(ncol(analysis_data), 3)
-})
+# (7) Test for unique neighbourhood numbers
 
-# Test that the 'division' column is character type
-test_that("'division' is character", {
-  expect_type(analysis_data$division, "character")
-})
-
-# Test that the 'party' column is character type
-test_that("'party' is character", {
-  expect_type(analysis_data$party, "character")
-})
-
-# Test that the 'state' column is character type
-test_that("'state' is character", {
-  expect_type(analysis_data$state, "character")
-})
-
-# Test that there are no missing values in the dataset
-test_that("no missing values in dataset", {
-  expect_true(all(!is.na(analysis_data)))
-})
-
-# Test that 'division' contains unique values (no duplicates)
-test_that("'division' column contains unique values", {
-  expect_equal(length(unique(analysis_data$division)), 151)
-})
-
-# Test that 'state' contains only valid Australian state or territory names
-valid_states <- c("New South Wales", "Victoria", "Queensland", "South Australia", "Western Australia", 
-                  "Tasmania", "Northern Territory", "Australian Capital Territory")
-test_that("'state' contains valid Australian state names", {
-  expect_true(all(analysis_data$state %in% valid_states))
-})
-
-# Test that there are no empty strings in 'division', 'party', or 'state' columns
-test_that("no empty strings in 'division', 'party', or 'state' columns", {
-  expect_false(any(analysis_data$division == "" | analysis_data$party == "" | analysis_data$state == ""))
-})
-
-# Test that the 'party' column contains at least 2 unique values
-test_that("'party' column contains at least 2 unique values", {
-  expect_true(length(unique(analysis_data$party)) >= 2)
+test_that("Neighbourhood numbers are unique", {
+  expect_true(n_distinct(testing_clean_data$`Neighbourhood Number`) == nrow(testing_clean_data))
 })
