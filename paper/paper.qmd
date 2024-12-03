@@ -1,13 +1,12 @@
 ---
-title: "My title"
-subtitle: "My subtitle if needed"
+title: "..."
+subtitle: "..."
 author: 
-  - First author
-  - Another author
-thanks: "Code and data are available at: [https://github.com/RohanAlexander/starter_folder](https://github.com/RohanAlexander/starter_folder)."
+  - Julia Lee
+thanks: "Code and data are available at: https://github.com/jjlee-lee/Toronto_Neighbourhood_Income.git"
 date: today
 date-format: long
-abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
+abstract: "..."
 format: pdf
 number-sections: true
 bibliography: references.bib
@@ -19,102 +18,79 @@ bibliography: references.bib
 #| message: false
 
 library(tidyverse)
-library(palmerpenguins)
+library(tinytex)
+library(knitr)
+library(ggplot2)
+library(dplyr)
+library(arrow)
+library(here)
+library(modelsummary)
 ```
 
 
 # Introduction
 
-Overview paragraph
-
-Estimand paragraph
-
-Results paragraph
-
-Why it matters paragraph
-
-Telegraphing paragraph: The remainder of this paper is structured as follows. @sec-data....
-
-
-
-
 
 
 # Data {#sec-data}
 
-## Overview
+To simulate, test, download, and clean the Neighbourhoods Profile data, the statistical programming language R was used [@citeR]. Specific libraries that assisted the analysis include `tidyverse` [@tidyverse], `dplyr` [@dplyr], `opendatatoronto` [@opendatatoronto], `tinytex` [@tinytex], `ggplot2` [@ggplot2], `knitr` [@knitr], `testthat` [@testthat], `here` [@here], `arrow` [@arrow], and `modelsummary` [@modelsummary]. 
 
-We use the statistical programming language R [@citeR].... Our data [@shelter].... Following @tellingstories, we consider...
+## Neighbourhood Profiles Data
 
-Overview text
+Neighbourhood Profiles data for the city of Toronto is provided by the Social Development, Finance & Administration from Toronto’s Open Data portal [@neighbourhoodprofile]. The dataset obtained from the city of Toronto’s Open Data portal [@opentorontodata], is a collection of data from the 2021 Canadian Census from Statistics Canada [@statisticscanada]. Records of socio-economic data for 158 geographic regions (i.e. social planning neighbourhoods) in Toronto can be found within this dataset. From age to ethnocultural diversity, the Census data highlights both the socio-economic and demographic characteristics of Toronto residents across its individual neighbourhoods. 
 
-## Measurement
+The Neighbourhood Profiles data is an extensive dataset with each row representing a demographic or socio-economic characteristic and each column reflecting a Toronto neighbourhood. For each neighbourhood, there is information on its name, identification number, and status. Status refers to a neighbourhood’s Toronto Strong Neighbourhoods Strategy (TSNS) designation, which indicates whether a neighbourhood is an emerging area, an area that needs improvement, or neither.  Additionally, data for each neighbourhood’s age population, income, education, and more from the 2021 Census is provided. @tbl-rawdata below offers a preview of this dataset.
+
+
+
+
+@tbl-rawdata displays neighbourhood names, numbers, and TSNS designations along with data for the number of individuals within different age groups in each neighbourhood. For example, Thistletown-Beaumond Heights is a neighbourhood in Toronto that needs improvement and has a fairly large number of children ages 0 to 14 years old. The rest of the dataset follows the same format, displaying different characteristics of all 158 neighbourhoods in the city of Toronto.
+
+## Analysis Data
 	
-Some paragraphs about how we go from a phenomena in the world to an entry in the dataset.
+For the present analysis, the variables of interest are the different types of census family sizes along with the average after-tax income for each of Toronto’s neighbourhoods. The Neighbourhood Profiles data includes four different census family sizes: (1) 2-person families, (2) 3-person families, (3) 4-person families, and (4) five or more-person families. It also provides the average after-tax income ($) recorded in 2020 for each neighbourhood.  
 
-## Outcome variables
-
-Add graphs, tables and text. Use sub-sub-headings for each outcome variable or update the subheading to be singular.
-
-
-
-Some of our data is of penguins (@fig-bills), from @palmerpenguins.
+Since the objective is to find out what kinds of families are driving average neighbourhood income in Toronto, the data used throughout this analysis reflects the average income level for all 158 neighbourhoods alongside their counts of different census family sizes. With minimal data wrangling, the analysis data is simply an extraction of the larger dataset with a focus on the different family sizes and average after-tax income. @tbl-analysis below illustrates this analysis data for three neighbourhoods and summary statistics for this data can be found in the Appendix (@sec-appendix). 
 
 ```{r}
-#| label: fig-bills
-#| fig-cap: Bills of penguins
 #| echo: false
-
-ggplot(penguins, aes(x = island, fill = species)) +
-  geom_bar(alpha = 0.8) +
-  scale_fill_manual(values = c("darkorange","purple","cyan4"),
-                    guide = "none") +
-  theme_minimal() +
-  facet_wrap(~species, ncol = 1) +
-  coord_flip()
-```
-
-Talk more about it.
-
-And also planes (@fig-planes). (You can change the height and width, but don't worry about doing that until you have finished every other aspect of the paper - Quarto will try to make it look nice and the defaults usually work well once you have enough text.)
-
-```{r}
-#| label: fig-planes
-#| fig-cap: Relationship between wing length and width
-#| echo: false
-#| warning: false
 #| message: false
+#| label: tbl-analysis
+#| tbl-cap: "Toronto Neighbourhood Profiles Data"
 
-analysis_data <- read_csv(here::here("data/02-analysis_data/analysis_data.csv"))
+analysis <- read_parquet(here::here("data/02-analysis_data/analysis_data.parquet"))
+#view(analysis)
 
-analysis_data |> 
-  ggplot(aes(x = width, y = length)) +
-  geom_point(alpha = 0.8) +
-  theme_minimal() +
-  labs(x = "Wing width (mm)",
-       y = "Wing length (mm)")
+for_table <- analysis[,c(1,2,4,5,6,7,10)]
+
+for_table |>
+  slice(1:3) |>
+  kable(
+    col.names = c("Name", "Number", "2 persons", "3 persons",
+                  "4 persons", "5 or more persons", "Average Income"),
+    digits = 1,
+    linesep = "",
+    align = c("l", "l", "c", "c", "c", "c", "c")
+  )
 ```
 
-Talk way more about it. 
+In @tbl-analysis, the “Name” column represents each neighbourhood’s name, and the “Number” column reflects each neighbourhood’s identification number. The variables, “2 persons”, “3 persons”, “4 persons”, and “5 or more persons” represent the number of census families in each neighbourhood with those particular family sizes. Lastly, the “Average Income” variable reflects the average after-tax income for all neighbourhoods in 2020 (recorded in dollars). Within the analysis data file provided by this analysis, there are additional variables that represent the total number of census families by family size, the average census family size, and the average number of children in census families for each neighbourhood. These variables are considered to obtain additional context about how families are made up and distributed across Toronto’s neighbourhoods. It is important to note that while this additional information provided a better understanding of the variables of interest, they are not included in the model of the analysis. A detailed account of the model can be found in (@sec-model).
 
-## Predictor variables
+## Map Data
 
-Add graphs, tables and text.
+To further understand the type of families that drive average neighbourhood income, this analysis also uses Neighbourhoods data – a shapefile that contains geographic information of Toronto neighbourhood boundaries – to map the results of its model. The boundaries of each neighbourhood are defined using census tract information provided by Statistics Canada, and the shapefile itself is published by the Social Development, Finance & Administration from Toronto’s Open Data portal [@socialdevelopment]. The map within this analysis is created using ArcGIS Pro software [@arcgis]. By joining the analysis data shown in @tbl-analysis with the shapefile based on neighbourhood names, a map that highlights the distribution of family sizes that drive average neighbourhood income is built. The information contained in the shapefile is shown below in @tbl-mapdata. 
 
-Use sub-sub-headings for each outcome variable and feel free to combine a few into one if they go together naturally.
+The Neighbourhoods shapefile data contains neighbourhood names, numbers, and TSNS designations similar to the Neighbourhood Profiles data. It also includes geographic information (i.e. Shape_Length and Shape_Area) that defines the boundaries of each neighbourhood. 
 
+## A Note on Measurement 
 
+The Neighbourhood Profiles data is a reflection of the 2021 Census for neighbourhoods in Toronto, meaning that it measures and represents the demographic and socio-economic characteristics of families across Toronto at this particular time period. This information is collected through the use of questionnaires – a short and long-form census. The short-form census is sent out to all households, and it asks questions about simple characteristics like age, gender, and household size. With this information, the short-form census attempts to enumerate all individuals within a geographic region and may impute any missing data. The long-form census is sent out to only 25% of households and is a deeper source of data that outlines information such as housing, education, and ethnicity. 
 
-
-
-
-
+So, various aspects of families’ livelihoods are measured through the Census and aggregated to create an overall picture of particular geographic regions – in this case, Toronto neighbourhoods. It is important to note that through this measurement process, there is room for error as well as a need to be aware of this potential for error. Missing data values can be imputed and the aggregation of individual household characteristics or experiences can lead to incorrect assumptions about certain regions and their populations. Thus, this analysis presents its findings with this in mind. 
 
 # Model
 
-The goal of our modelling strategy is twofold. Firstly,...
-
-Here we briefly describe the Bayesian analysis model used to investigate... Background details and diagnostics are included in [Appendix -@sec-model-details].
 
 ## Model set-up
 
@@ -129,48 +105,15 @@ y_i|\mu_i, \sigma &\sim \mbox{Normal}(\mu_i, \sigma) \\
 \sigma &\sim \mbox{Exponential}(1)
 \end{align}
 
-We run the model in R [@citeR] using the `rstanarm` package of @rstanarm. We use the default priors from `rstanarm`.
+
+## Model justification
 
 
-### Model justification
+## Model Validation
 
-We expect a positive relationship between the size of the wings and time spent aloft. In particular...
-
-We can use maths by including latex between dollar signs, for instance $\theta$.
 
 
 # Results
-
-Our results are summarized in @tbl-modelresults.
-
-```{r}
-#| echo: false
-#| eval: true
-#| warning: false
-#| message: false
-
-library(rstanarm)
-
-first_model <-
-  readRDS(file = here::here("models/first_model.rds"))
-```
-
-```{r}
-#| echo: false
-#| eval: true
-#| label: tbl-modelresults
-#| tbl-cap: "Explanatory models of flight time based on wing width and wing length"
-#| warning: false
-
-modelsummary::modelsummary(
-  list(
-    "First model" = first_model
-  ),
-  statistic = "mad",
-  fmt = 2
-)
-```
-
 
 
 
@@ -178,26 +121,25 @@ modelsummary::modelsummary(
 
 ## First discussion point {#sec-first-point}
 
-If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this. 
 
 ## Second discussion point
 
-Please don't use these as sub-heading labels - change them to be what your point actually is.
 
 ## Third discussion point
 
-## Weaknesses and next steps
+## Limiations & Future Directions
 
-Weaknesses and next steps should also be included.
+
 
 \newpage
 
 \appendix
 
-# Appendix {-}
+# Appendix {#sec-appendix}
+
+## Analysis Data Summary Statistics 
 
 
-# Additional data details
 
 # Model details {#sec-model-details}
 
