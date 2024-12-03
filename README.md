@@ -6,7 +6,7 @@ This repository provides readers with the necessary data, R scripts, and files t
 
 ## File Structure
 
-The repo is structured as:
+The repository is structured as follows:
 
 - In the `scripts` directory, there are R scripts and code to simulate, download, and clean the data. There is also a script (`05-model_data.R`) outlining the code for the model used within this analysis.
 - The `data` folder contains folders for simulated data, raw data obtained from the Open Toronto Data Portal, and cleaned, analysis data. There is also a folder (`03-map_data`) that contains a shapefile used to create a map within this analysis. This spatial data is also obtained from the Open Toronto Data Portal. 
