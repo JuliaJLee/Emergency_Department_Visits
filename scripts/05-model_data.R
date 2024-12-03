@@ -12,7 +12,6 @@
 #### Setting Up the Workspace ####
 
 library(tidyverse)
-library(testthat)
 library(arrow)
 library(here)
 library(dplyr)
