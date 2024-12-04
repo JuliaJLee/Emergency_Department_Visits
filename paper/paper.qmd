@@ -27,20 +27,17 @@ library(here)
 library(modelsummary)
 ```
 
-
 # Introduction
-
-
 
 # Data {#sec-data}
 
-To simulate, test, download, and clean the Neighbourhoods Profile data, the statistical programming language R was used [@citeR]. Specific libraries that assisted the analysis include `tidyverse` [@tidyverse], `opendatatoronto` [@opendatatoronto], `tinytex` [@tinytex], `ggplot2` [@ggplot2], `knitr` [@knitr], `testthat` [@testthat], `here` [@here], `arrow` [@arrow], `modelsummary` [@modelsummary], and `sf` [@sf]. 
+To simulate, test, download, and clean the Neighbourhoods Profile data, the statistical programming language R was used [@citeR]. Specific libraries that assisted the analysis include `tidyverse` [@tidyverse], `opendatatoronto` [@opendatatoronto], `tinytex` [@tinytex], `ggplot2` [@ggplot2], `knitr` [@knitr], `testthat` [@testthat], `here` [@here], `arrow` [@arrow], `modelsummary` [@modelsummary], and `sf` [@sf].
 
 ## Neighbourhood Profiles Data
 
-Neighbourhood Profiles data for the city of Toronto is provided by the Social Development, Finance & Administration from Toronto’s Open Data portal [@neighbourhoodprofile]. The dataset obtained from the city of Toronto’s Open Data portal [@opentorontodata], is a collection of data from the 2021 Canadian Census from Statistics Canada [@statisticscanada]. Records of socio-economic data for 158 geographic regions (i.e. social planning neighbourhoods) in Toronto can be found within this dataset. From age to ethnocultural diversity, the Census data highlights both the socio-economic and demographic characteristics of Toronto residents across its individual neighbourhoods. 
+Neighbourhood Profiles data for the city of Toronto is provided by the Social Development, Finance & Administration from Toronto’s Open Data portal [@neighbourhoodprofile]. The dataset obtained from the city of Toronto’s Open Data portal [@opentorontodata], is a collection of data from the 2021 Canadian Census from Statistics Canada [@statisticscanada]. Records of socio-economic data for 158 geographic regions (i.e. social planning neighbourhoods) in Toronto can be found within this dataset. From age to ethnocultural diversity, the Census data highlights both the socio-economic and demographic characteristics of Toronto residents across its individual neighbourhoods.
 
-The Neighbourhood Profiles data is an extensive dataset with each row representing a demographic or socio-economic characteristic and each column reflecting a Toronto neighbourhood. For each neighbourhood, there is information on its name, identification number, and status. Status refers to a neighbourhood’s Toronto Strong Neighbourhoods Strategy (TSNS) designation, which indicates whether a neighbourhood is an emerging area, an area that needs improvement, or neither.  Additionally, data for each neighbourhood’s age population, income, education, and more from the 2021 Census is provided. @tbl-rawdata below offers a small preview of this dataset.
+The Neighbourhood Profiles data is an extensive dataset with each row representing a demographic or socio-economic characteristic and each column reflecting a Toronto neighbourhood. For each neighbourhood, there is information on its name, identification number, and status. Status refers to a neighbourhood’s Toronto Strong Neighbourhoods Strategy (TSNS) designation, which indicates whether a neighbourhood is an emerging area, an area that needs improvement, or neither. Additionally, data for each neighbourhood’s age population, income, education, and more from the 2021 Census is provided. @tbl-rawdata below offers a small preview of this dataset.
 
 ```{r}
 #| echo: false
@@ -64,14 +61,13 @@ for_show |>
   )
 ```
 
-
 @tbl-rawdata displays the name, number, and TSNS designation along with data for the number of individuals within different age groups for a neighbourhood (West Humber-Clairville) in Toronto. By looking at @tbl-rawdata, West Humber-Clairville is a neighbourhood that is not an emerging area and one that does not need improvement. It is also a region with a fairly large number of children ages 0 to 14 years old. The rest of the dataset follows the same format, displaying different characteristics (e.g. older age groups, education attainment, income levels, etc.) of all 158 neighbourhoods in the city of Toronto.
 
 ## Analysis Data
-	
-For the present analysis, the variables of interest are the different types of census family sizes along with the average after-tax income for each of Toronto’s neighbourhoods. The Neighbourhood Profiles data includes four different census family sizes: (1) 2-person families, (2) 3-person families, (3) 4-person families, and (4) five or more-person families. In simple terms, Statistics Canada defines a census family as one where all family members (related by blood marriage, common-law union, adoption, or a foster relationship) live together in the same dwelling [@censusdefinition]. Census families can also be referred to as economic families [@economicdefinition]. The data further provides the average after-tax income ($) recorded in 2020 for each neighbourhood.  
 
-Since the objective is to find out what kinds of families are driving average neighbourhood income in Toronto, the data used throughout this analysis reflects the average income level for all 158 neighbourhoods alongside their counts of different census family sizes. With minimal data wrangling, the analysis data is simply an extraction of the larger dataset with a focus on the different family sizes and average after-tax income. @tbl-analysis below illustrates this analysis data for three neighbourhoods and summary statistics for this data can be found in the Appendix (@sec-appendixsummary). 
+For the present analysis, the variables of interest are the different types of census family sizes along with the average after-tax income for each of Toronto’s neighbourhoods. The Neighbourhood Profiles data includes four different census family sizes: (1) 2-person families, (2) 3-person families, (3) 4-person families, and (4) five or more-person families. In simple terms, Statistics Canada defines a census family as one where all family members (related by blood marriage, common-law union, adoption, or a foster relationship) live together in the same dwelling [@censusdefinition]. Census families can also be referred to as economic families [@economicdefinition]. The data further provides the average after-tax income (\$) recorded in 2020 for each neighbourhood.
+
+Since the objective is to find out what kinds of families are driving average neighbourhood income in Toronto, the data used throughout this analysis reflects the average income level for all 158 neighbourhoods alongside their counts of different census family sizes. With minimal data wrangling, the analysis data is simply an extraction of the larger dataset with a focus on the different family sizes and average after-tax income. @tbl-analysis below illustrates this analysis data for three neighbourhoods and summary statistics for this data can be found in the Appendix (@sec-appendixsummary).
 
 ```{r}
 #| echo: false
@@ -99,7 +95,7 @@ In @tbl-analysis, the “Name” column represents each neighbourhood’s name, 
 
 ## Map Data
 
-To further understand the type of families that drive average neighbourhood income, this analysis also uses Neighbourhoods data – a shapefile that contains geographic information of Toronto neighbourhood boundaries – to map the results of its model. The boundaries of each neighbourhood are defined using census tract information provided by Statistics Canada, and the shapefile itself is published by the Social Development, Finance & Administration from Toronto’s Open Data portal [@socialdevelopment]. The map within this analysis is created using ArcGIS Pro software [@arcgis]. By joining the analysis data shown in @tbl-analysis with the shapefile based on neighbourhood names, a map that highlights the distribution of family sizes that drive average neighbourhood income can be created. The information contained in the shapefile is shown below in @tbl-mapdata. 
+To further understand the type of families that drive average neighbourhood income, this analysis also uses Neighbourhoods data – a shapefile that contains geographic information of Toronto neighbourhood boundaries – to map the results of its model. The boundaries of each neighbourhood are defined using census tract information provided by Statistics Canada, and the shapefile itself is published by the Social Development, Finance & Administration from Toronto’s Open Data portal [@socialdevelopment]. The map within this analysis is created using ArcGIS Pro software [@arcgis]. By joining the analysis data shown in @tbl-analysis with the shapefile based on neighbourhood names, a map that highlights the distribution of family sizes that drive average neighbourhood income can be created. The information contained in the shapefile is shown below in @tbl-mapdata.
 
 ```{r}
 #| echo: false
@@ -129,18 +125,17 @@ for_illustration |>
   )
 ```
 
+The Neighbourhoods shapefile data contains neighbourhood names, numbers, and TSNS designations similar to the Neighbourhood Profiles data (@tbl-rawdata). It also includes geographic information (i.e. the geometry/coordinates of a neighbourhood) that defines the boundaries of each neighbourhood as shown in @tbl-mapdata.
 
-The Neighbourhoods shapefile data contains neighbourhood names, numbers, and TSNS designations similar to the Neighbourhood Profiles data (@tbl-rawdata). It also includes geographic information (i.e. the geometry/coordinates of a neighbourhood) that defines the boundaries of each neighbourhood as shown in @tbl-mapdata. 
+## A Note on Measurement
 
-## A Note on Measurement 
+The Neighbourhood Profiles data is a reflection of the 2021 Census for neighbourhoods in Toronto, meaning that it measures and represents the demographic and socio-economic characteristics of families across Toronto at this particular time period. This information is collected through the use of questionnaires – a short and long-form census. The short-form census is sent out to all households, and it asks questions about simple characteristics like age, gender, and household size. With this information, the short-form census attempts to enumerate all individuals within a geographic region and may impute any missing data. The long-form census is sent out to only 25% of households and is a deeper source of data that outlines information such as housing, education, and ethnicity.
 
-The Neighbourhood Profiles data is a reflection of the 2021 Census for neighbourhoods in Toronto, meaning that it measures and represents the demographic and socio-economic characteristics of families across Toronto at this particular time period. This information is collected through the use of questionnaires – a short and long-form census. The short-form census is sent out to all households, and it asks questions about simple characteristics like age, gender, and household size. With this information, the short-form census attempts to enumerate all individuals within a geographic region and may impute any missing data. The long-form census is sent out to only 25% of households and is a deeper source of data that outlines information such as housing, education, and ethnicity. 
-
-So, various aspects of families’ livelihoods are measured through the Census and aggregated to create an overall picture of particular geographic regions – in this case, Toronto neighbourhoods. It is important to note that through this measurement process, there is room for error as well as a need to be aware of this potential for error. Missing data values can be imputed and the aggregation of individual household characteristics or experiences can lead to incorrect assumptions about certain regions and their populations. Thus, this analysis presents its findings with this in mind. 
+So, various aspects of families’ livelihoods are measured through the Census and aggregated to create an overall picture of particular geographic regions – in this case, Toronto neighbourhoods. It is important to note that through this measurement process, there is room for error as well as a need to be aware of this potential for error. Missing data values can be imputed and the aggregation of individual household characteristics or experiences can lead to incorrect assumptions about certain regions and their populations. Thus, this analysis presents its findings with this in mind.
 
 # Model {#sec-model}
 
-To understand the types of families that drive average neighbourhood income, this analysis constructs a multiple linear regression model using R [@citeR] that considers average neighbourhood income as the response variable and the different census family sizes as predictors. As mentioned in @sec-data, the average neighbourhood income variable reflects the average after-tax income of all census families for each neighbourhood in 2020 (recorded in dollars). Different family sizes (i.e. 2 to 5 or more-person families) refer the number of family members that live in the same dwelling within each individual neighbourhood. With this, the final model within this analysis is structured as follows: 
+To understand the types of families that drive average neighbourhood income, this analysis constructs a multiple linear regression model using R [@citeR] that considers average neighbourhood income as the response variable and the different census family sizes as predictors. As mentioned in @sec-data, the average neighbourhood income variable reflects the average after-tax income of all census families for each neighbourhood in 2020 (recorded in dollars). Different family sizes (i.e. 2 to 5 or more-person families) refer the number of family members that live in the same dwelling within each individual neighbourhood. With this, the final model within this analysis is structured as follows:
 
 $$
 \hat{y} = b_0 + b_1 \cdot x_1 + b_2 \cdot x_2 + b_3 \cdot x_3 + \epsilon
@@ -166,48 +161,120 @@ where
 
 -   $\epsilon$ captures the error within the regression model
 
-It is important to highlight that as a result of model selection and individual predictor t-tests, families with 5 or more members are not considered in the final model. The impact of 2, 3, and 4-person families on average neighbourhood income across Toronto neighbourhoods are examined through this model. 
+It is important to highlight that as a result of model selection and individual predictor t-tests, families with 5 or more members are not considered in the final model. The impact of 2, 3, and 4-person families on average neighbourhood income across Toronto neighbourhoods are examined through this model.
 
 ## Model justification
 
-As the objective of the analysis is to understand what might be driving the average neighbourhood income in terms of family size, a multiple linear regression will allow for an examination of the relationship between different census family sizes and average income. By striving to preserve the interpretability of the model, this analysis can further determine which family sizes are meaningful influencers of a neighbourhood’s average after-tax income. 
+As the objective of the analysis is to understand what might be driving the average neighbourhood income in terms of family size, a multiple linear regression will allow for an examination of the relationship between different census family sizes and average income. By striving to preserve the interpretability of the model, this analysis can further determine which family sizes are meaningful influencers of a neighbourhood’s average after-tax income.
 
 The underlying assumption of linearity that multiple linear regression models hold can be a potential limitation as these models will not be able accurately explain the influence of predictors on a response variable if these variables have a non-linear relationship with each other. The use of a multiple linear regression may not be the best choice in these cases. However, with average neighbourhood income and increasing census family sizes, the model’s diagnostic plots provide evidence for linearity, meaning that the use of a multiple linear regression model can be suitable for this analysis. Further justification and validation for the model can be found in the Appendix (@sec-appendixmodel).
 
 # Results {#sec-results}
 
+## Distribution of Different Census Family Sizes Across Toronto Neighbourhoods
+
 ```{r}
 #| echo: false 
 #| message: false
-#| label: fig-familysizedistribution
-#| fig-cap: Number of 2, 3, and 4-person Census Families Across Toronto Neighbourhoods
+#| label: fig-familysizetwo
+#| fig-cap: Number of 2-person Census Families Across Toronto Neighbourhoods
 
 family_size <- read_parquet(here::here("data/02-analysis_data/analysis_data.parquet"))
 #view(family_size)
 
+# Rename columns
+
+fam_size_data <-
+  family_size |>
+  rename(
+    neighbourhood_name = "Neighbourhood Name",
+    neighbourhood_num = "Neighbourhood Number",
+    num_census_fam = "Total - Census families in private households by family size - 25% sample data",
+    size_two = "2 persons",
+    size_three = "3 persons",
+    size_four = "4 persons",
+    size_five_plus = "5 or more persons",
+    avg_fam_size = "Average size of census families",
+    avg_num_child = "Average number of children in census families with children",
+    avg_income = "Average after-tax income of economic family in 2020 ($)"
+  )
+
 # Turn values into numeric data type
 
-family_size$`Neighbourhood Number` = as.numeric(as.character(family_size$`Neighbourhood Number`))
-family_size$`2 persons` = as.numeric(as.character(family_size$`2 persons`))
-family_size$`3 persons` = as.numeric(as.character(family_size$`3 persons`))
-family_size$`4 persons` = as.numeric(as.character(family_size$`4 persons`))
+fam_size_data$size_two = as.numeric(as.character(fam_size_data$size_two))
+fam_size_data$size_three = as.numeric(as.character(fam_size_data$size_three))
+fam_size_data$size_four = as.numeric(as.character(fam_size_data$size_four))
 
-ggplot(family_size, aes(x = "Neighbourhood Name", y = "2 persons")) + 
-  geom_line(linewidth = 0.5, colour="black") + geom_point(colour = "black") +
- theme_light()  
-  ggtitle("EMS Demand From 2017 to 2022") +
-  labs(x = "Year", y = "Demand for EMS", caption = "Data Source: Toronto Paramedic Services") + 
-  theme(plot.title = element_text(hjust = 0.5)) 
+ggplot(fam_size_data, aes(x = neighbourhood_num, y = size_two)) + 
+  geom_bar(stat = "identity", colour = "blue", fill = "lightblue") + theme_light() +  
+  ggtitle("2-person Families in Toronto Neighbourhoods") +
+  labs(x = "158 Toronto Neighbourhoods", y = "Number of 2-person Families", 
+       caption = "Data Source: Statistics Canada, 2021 Census") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(axis.text.x = element_blank()
+  )
 ```
 
+```{r}
+#| echo: false 
+#| message: false
+#| label: fig-familysizethree
+#| fig-cap: Number of 3-person Census Families Across Toronto Neighbourhoods
+
+ggplot(fam_size_data, aes(x = neighbourhood_num, y = size_three)) + 
+  geom_bar(stat = "identity", colour = "purple", fill = "pink") + theme_light() +  
+  ggtitle("3-person Families in Toronto Neighbourhoods") +
+  labs(x = "158 Toronto Neighbourhoods", y = "Number of 3-person Families", 
+       caption = "Data Source: Statistics Canada, 2021 Census") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(axis.text.x = element_blank()
+  )
+```
+
+```{r}
+#| echo: false 
+#| message: false
+#| label: fig-familysizefour
+#| fig-cap: Number of 4-person Census Families Across Toronto Neighbourhoods
+
+ggplot(fam_size_data, aes(x = neighbourhood_num, y = size_four)) + 
+  geom_bar(stat = "identity", colour = "darkgreen", fill = "lightgreen") + theme_light() +  
+  ggtitle("4-person Families in Toronto Neigbourhoods") +
+  labs(x = "158 Toronto Neighbourhoods", y = "Number of 4-person Families", 
+       caption = "Data Source: Statistics Canada, 2021 Census") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(axis.text.x = element_blank()
+  )
+```
+
+@fig-familysizetwo, @fig-familysizethree, and @fig-familysizefour illustrate the number of 2, 3, and 4-person families, respectively, across Toronto’s 158 neighbourhoods. From this, 2-person census families appear to be the most common as almost all neighbourhoods have close to 1000 2-person families with several of them having over 3000, near 4000 2-person families. On the other hand, 3 and 4-person families seem to less common with more neighbourhoods having less than 1000 families of these sizes (i.e. under or just over 500 families) and with the maximum number of 3 or 4-person families being just under 3000. These observations seem to suggest that given the higher numbers of 2-person families across Toronto neighbourhoods, this family size may be a key driver of average neighbourhood income within the city of Toronto.
+
+## Model Results
+
+```{r}
+#| warning: false
+#| echo: false
+#| label: tbl-modelresults
+#| tbl-cap: "Summary Results of Analysis Model"
+
+model_results <- readRDS(here("model/model_1.rds"))
+
+modelsummary(model_results, statistic = "{std.error} ({p.value})")
+```
+
+The results from the model shown in @tbl-modelresults indicate significant relationships between average neighbourhood income and different census family sizes (p \< 0.001 for each family size). This means that the addition of a 2-person census family to a neighbourhood is expected to increase the neighbourhood’s average after-tax income by around \$28.59 (± 4.76). Likewise, the addition of a 4-person family to a neighbourhood is expected to increase the neighbourhood’s average after-tax income by approximately \$148.40 (± 16.32). Interestingly, the addition of a 3-person census family to a neighbourhood is expected to decrease the neighbourhood’s average after-tax income by around \$184.42 (± 17.66). These findings seem to suggest that 4-person families are also be key drivers of average neighbourhood income. Additionally, this may imply that on average, while 2 and 4-person families can commonly have above-average incomes, more 3-person families may have below-average incomes across Toronto’s neighbourhoods.
+
+## Map Visualization
+
+![Distribution of 4-person Census Families Across Toronto](images/map_visualization_four-02.png){#fig-map}
+
+![Distribution of 2-person Census Families Across Toronto](images/map_visualization_two-02.png){#fig-map2}
+
+The initial analysis of the distribution of different census family sizes across Toronto neighbourhoods highlighted that 2-person families can be key drivers of average neighbourhood income. The results of the model further suggest that 2 and 4-person families positively contribute to average neighbourhood income. With this in mind, @fig-map maps the distribution of 4-person census families throughout the city of Toronto. This shows how the majority of 4-person census families are found in the neighbourhoods towards the east end of the city with a few neighbourhoods near the city’s centre and the Harbourfront area. @fig-map2 demonstrates the distribution of 2-person families. Here, there appears to be a shift in that more 2-person census families seem to be in neighbourhoods closer to the city’s centre and the west side of the Harbourfront area. These illustrations provide a better understanding of where the key drivers of average neighbourhood income are located.
 
 # Discussion {#sec-discussion}
 
-
-
 ## Limiations & Future Directions
-
-
 
 \newpage
 
@@ -251,11 +318,11 @@ final_summary |>
   )
 ```
 
-@tbl-summarystatistics presents the summary statistics for each census family size and the average after-tax income across all 158 neighbourhoods in Toronto. 
+@tbl-summarystatistics presents the summary statistics for each census family size and the average after-tax income across all 158 neighbourhoods in Toronto.
 
 ## Model Validation {#sec-appendixmodel}
 
-The construction of a model for this analysis began by fitting an initial model with average neighbourhood income as the response variable and 2, 3, 4, and 5 or more-person families as predictors. As seen by @tbl-initialmodel and the individual t-tests, 5 or more-person families do not appear to significantly impact a neighbourhood’s average income with the largest p-value among all predictors (p > 0.001). 
+The construction of a model for this analysis began by fitting an initial model with average neighbourhood income as the response variable and 2, 3, 4, and 5 or more-person families as predictors. As seen by @tbl-initialmodel and the individual t-tests, 5 or more-person families do not appear to significantly impact a neighbourhood’s average income with the largest p-value among all predictors (p \> 0.001).
 
 ```{r}
 #| warning: false
@@ -303,7 +370,7 @@ initial_model <- lm(avg_income ~ size_two + size_three + size_four +
 modelsummary(initial_model, statistic = "{std.error} ({p.value})")
 ```
 
-So, another model was created without this variable (i.e. a reduced model), and all predictors seem to have significant impacts (p < 0.001) on neighbourhood income as shown in @tbl-newmodel.
+So, another model was created without this variable (i.e. a reduced model), and all predictors seem to have significant impacts (p \< 0.001) on neighbourhood income as shown in @tbl-newmodel.
 
 ```{r}
 #| warning: false
@@ -342,9 +409,9 @@ bic_scores |>
 )
 ```
 
-The purpose of the model is to be able to interpret the coefficient estimates and what they mean in terms of influencing average neighbourhood income. For this reason, transformations (e.g. log transformations on predictor variables) were not applied to the data even with the presence of some evidence against the linear regression model assumptions. 
+The purpose of the model is to be able to interpret the coefficient estimates and what they mean in terms of influencing average neighbourhood income. For this reason, transformations (e.g. log transformations on predictor variables) were not applied to the data even with the presence of some evidence against the linear regression model assumptions.
 
-Looking at the diagnostic plots (@fig-residualsandpredictors), the lack of observational patterns in the Residuals vs Predictor plots for 2, 3, and 4-person families points to evidence for the linearity assumption of linear regression models. 
+Looking at the diagnostic plots (@fig-residualsandpredictors), the lack of observational patterns in the Residuals vs Predictor plots for 2, 3, and 4-person families points to evidence for the linearity assumption of linear regression models.
 
 ```{r}
 #| echo: false
@@ -364,7 +431,8 @@ plot(residuals_1 ~ regression_data$size_three, main = "Residuals vs 3-person Fam
 plot(residuals_1 ~ regression_data$size_four, main = "Residuals vs 4-person Families", 
      xlab = "Number of 4-person Families", ylab = "Residuals")
 ```
-The Residual vs Fitted Values plot (@fig-residualsandfitted) seems to have some clustering of points, indicating that the constant variance and independence assumptions are somewhat satisfied. However, because the overall pattern of the plot is still relatively spread out with no observable patterns, and as the objective of the model is interpretability, transformations were not applied to the variables in the model to better these assumptions. 
+
+The Residual vs Fitted Values plot (@fig-residualsandfitted) seems to have some clustering of points, indicating that the constant variance and independence assumptions are somewhat satisfied. However, because the overall pattern of the plot is still relatively spread out with no observable patterns, and as the objective of the model is interpretability, transformations were not applied to the variables in the model to better these assumptions.
 
 ```{r}
 #| echo: false
@@ -380,7 +448,8 @@ plot(residuals_1 ~ fitted_1, main = "Residuals vs Fitted Values",
      xlab = "Fitted Values", ylab = "Residuals")
 abline(h = 0, col ="red")
 ```
-Lastly, though the Normal Q-Q plot (@fig-normal) shows some deviation from the Q-Q line, the normality assumption is somewhat satisfied with little evidence to suggest an alarming violation of this assumption. Putting all this together, while improvements can be made to the model for better, more accurate predictions, it is sufficient for the purpose of interpretability.  
+
+Lastly, though the Normal Q-Q plot (@fig-normal) shows some deviation from the Q-Q line, the normality assumption is somewhat satisfied with little evidence to suggest an alarming violation of this assumption. Putting all this together, while improvements can be made to the model for better, more accurate predictions, it is sufficient for the purpose of interpretability.
 
 ```{r}
 #| echo: false
@@ -396,5 +465,3 @@ qqline(residuals_1)
 \newpage
 
 # References
-
-
