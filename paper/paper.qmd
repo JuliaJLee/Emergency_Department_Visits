@@ -6,7 +6,7 @@ author:
 thanks: "Code and data are available at: https://github.com/jjlee-lee/Toronto_Neighbourhood_Income.git"
 date: today
 date-format: long
-abstract: "..."
+abstract: "By examining Toronto Neighbourhood Profiles data, the following analysis aims to understand what kinds of families drive average neighbourhood income to help support planning decisions for individual neighbourhoods along with local and general businesses. With both data visualization and the application of a linear regression model, this analysis finds that 2-person and 4-person families are key drivers of average neighbourhood income throughout Toronto. This implies that focusing neighbourhood or business planning decisions on these types of families may help to increase a neighbourhood or business’ income position. Further, this analysis highlights that additional considerations for the unique characteristics of these key driver families are important to understand the interplay between families and neighbourhood income in more depth."
 format: pdf
 number-sections: true
 bibliography: references.bib
@@ -28,6 +28,14 @@ library(modelsummary)
 ```
 
 # Introduction
+
+The interactions families have with their surrounding environments (i.e. their neighbourhoods) can be influenced by both the characteristics of the environment and the kinds of resources that families have. Income and financial resources can be strong determinants of the types of opportunities (e.g. housing, education, employment, etc.) families are able to access within their neighbourhoods [@resource]. With this, to better understand the concept of income across the city of Toronto’s neighbourhoods, this analysis aims to identify and determine the kinds of families that are driving average neighbourhood income levels. 
+
+This analysis can help support and inform planning decisions for individual neighbourhoods along with local and general businesses. With a better understanding of the livelihoods of families in Toronto, it may be possible to better allocate resources to the neighbourhoods that have few families that drive the average neighbourhood income. Further, planning decisions that center around effectively targeting or considering the families that drive neighbourhood income may help to strengthen the income position of various neighbourhoods or local businesses. Thus, this analysis serves as a starting point to further understand the interaction between families and neighbourhood income.  
+
+By considering data from the 2021 Canadian Census, this analysis begins by investigating the distribution of different census family sizes (i.e. 2, 3, or 4-person families) across all 158 of Toronto’s neighbourhoods. Next, it creates a multiple linear regression model that examines the relationship between average neighbourhood income and different family sizes. The results of this model demonstrate the family sizes that significantly impact neighbourhood income. Lastly, after identifying key drivers of average neighbourhood income through the model, the analysis considers the geographic locations of those drivers. As a result, the present analysis finds that 2 and 4-person families are key drivers of average neighbourhood income. Additionally, as there are varying numbers of 2 and 4-person families across Toronto neighbourhoods, it is important to also consider the characteristics of individual families to ensure effective neighbourhood or local business planning decisions.
+
+The following provides an in-depth description of the data used within this analysis [@sec-data], an explanation of the analysis model [@sec-model], a detailed account of the findings [@sec-results], and a thorough discussion of the overall analysis [@sec-discussion].
 
 # Data {#sec-data}
 
@@ -206,9 +214,8 @@ fam_size_data$size_three = as.numeric(as.character(fam_size_data$size_three))
 fam_size_data$size_four = as.numeric(as.character(fam_size_data$size_four))
 
 ggplot(fam_size_data, aes(x = neighbourhood_num, y = size_two)) + 
-  geom_bar(stat = "identity", colour = "blue", fill = "lightblue") + theme_light() +  
-  ggtitle("2-person Families in Toronto Neighbourhoods") +
-  labs(x = "158 Toronto Neighbourhoods", y = "Number of 2-person Families", 
+  geom_bar(stat = "identity", colour = "blue", fill = "lightblue") + theme_light() +
+  labs(x = "Toronto Neighbourhoods (158)", y = "Number of 2-person Families", 
        caption = "Data Source: Statistics Canada, 2021 Census") + 
   theme(plot.title = element_text(hjust = 0.5)) +
   theme(axis.text.x = element_blank()
@@ -222,9 +229,8 @@ ggplot(fam_size_data, aes(x = neighbourhood_num, y = size_two)) +
 #| fig-cap: Number of 3-person Census Families Across Toronto Neighbourhoods
 
 ggplot(fam_size_data, aes(x = neighbourhood_num, y = size_three)) + 
-  geom_bar(stat = "identity", colour = "purple", fill = "pink") + theme_light() +  
-  ggtitle("3-person Families in Toronto Neighbourhoods") +
-  labs(x = "158 Toronto Neighbourhoods", y = "Number of 3-person Families", 
+  geom_bar(stat = "identity", colour = "purple", fill = "pink") + theme_light() +
+  labs(x = "Toronto Neighbourhoods (158)", y = "Number of 3-person Families", 
        caption = "Data Source: Statistics Canada, 2021 Census") + 
   theme(plot.title = element_text(hjust = 0.5)) +
   theme(axis.text.x = element_blank()
@@ -238,9 +244,8 @@ ggplot(fam_size_data, aes(x = neighbourhood_num, y = size_three)) +
 #| fig-cap: Number of 4-person Census Families Across Toronto Neighbourhoods
 
 ggplot(fam_size_data, aes(x = neighbourhood_num, y = size_four)) + 
-  geom_bar(stat = "identity", colour = "darkgreen", fill = "lightgreen") + theme_light() +  
-  ggtitle("4-person Families in Toronto Neigbourhoods") +
-  labs(x = "158 Toronto Neighbourhoods", y = "Number of 4-person Families", 
+  geom_bar(stat = "identity", colour = "darkgreen", fill = "lightgreen") + theme_light() +
+  labs(x = "Toronto Neighbourhoods (158)", y = "Number of 4-person Families", 
        caption = "Data Source: Statistics Canada, 2021 Census") + 
   theme(plot.title = element_text(hjust = 0.5)) +
   theme(axis.text.x = element_blank()
@@ -442,11 +447,11 @@ residuals_1 <- model$residuals
 #summary(residuals_1)
 
 par(mfrow=c(1,3))
-plot(residuals_1 ~ regression_data$size_two, main = "Residuals vs 2-person Families", 
+plot(residuals_1 ~ regression_data$size_two, 
      xlab = "Number of 2-person Families", ylab = "Residuals")
-plot(residuals_1 ~ regression_data$size_three, main = "Residuals vs 3-person Families", 
+plot(residuals_1 ~ regression_data$size_three, 
      xlab = "Number of 3-person Families", ylab = "Residuals")
-plot(residuals_1 ~ regression_data$size_four, main = "Residuals vs 4-person Families", 
+plot(residuals_1 ~ regression_data$size_four, 
      xlab = "Number of 4-person Families", ylab = "Residuals")
 ```
 
@@ -462,7 +467,7 @@ The Residual vs Fitted Values plot (@fig-residualsandfitted) seems to have some 
 fitted_1 <- model$fitted.values
 #summary(fitted_1)
 
-plot(residuals_1 ~ fitted_1, main = "Residuals vs Fitted Values", 
+plot(residuals_1 ~ fitted_1, 
      xlab = "Fitted Values", ylab = "Residuals")
 abline(h = 0, col ="red")
 ```
