@@ -254,6 +254,8 @@ ggplot(fam_size_data, aes(x = neighbourhood_num, y = size_four)) +
 
 @fig-familysizetwo, @fig-familysizethree, and @fig-familysizefour illustrate the number of 2, 3, and 4-person families, respectively, across Toronto’s 158 neighbourhoods. From this, 2-person census families appear to be the most common as almost all neighbourhoods have close to 1000 2-person families with several of them having over 3000, near 4000 2-person families. On the other hand, 3 and 4-person families seem to less common with more neighbourhoods having less than 1000 families of these sizes (i.e. under or just over 500 families) and with the maximum number of 3 or 4-person families being just under 3000. These observations seem to suggest that given the higher numbers of 2-person families across Toronto neighbourhoods, this family size may be a key driver of average neighbourhood income within the city of Toronto.
 
+\newpage
+
 ## Model Results
 
 ```{r}
@@ -268,6 +270,8 @@ modelsummary(model_results, statistic = "{std.error} ({p.value})")
 ```
 
 The results from the model shown in @tbl-modelresults indicate significant relationships between average neighbourhood income and different census family sizes (p \< 0.001 for each family size). This means that the addition of a 2-person census family to a neighbourhood is expected to increase the neighbourhood’s average after-tax income by around \$28.59 (± 4.76). Likewise, the addition of a 4-person family to a neighbourhood is expected to increase the neighbourhood’s average after-tax income by approximately \$148.40 (± 16.32). Interestingly, the addition of a 3-person census family to a neighbourhood is expected to decrease the neighbourhood’s average after-tax income by around \$184.42 (± 17.66). These findings seem to suggest that 4-person families are also be key drivers of average neighbourhood income. Additionally, this may imply that on average, while 2 and 4-person families can commonly have above-average incomes, more 3-person families may have below-average incomes across Toronto’s neighbourhoods.
+
+\newpage
 
 ## Map Visualization
 
