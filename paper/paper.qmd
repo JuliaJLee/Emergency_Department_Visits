@@ -1,6 +1,6 @@
 ---
-title: "..."
-subtitle: "..."
+title: "How do families shape average neighbourhood incomes in Toronto?"
+subtitle: "Different family sizes appear to impact income in different ways with 2 and 4-person families being key drivers of average neighbourhood incomes in Toronto"
 author: 
   - Julia Lee
 thanks: "Code and data are available at: https://github.com/jjlee-lee/Toronto_Neighbourhood_Income.git"
@@ -30,6 +30,8 @@ library(modelsummary)
 # Introduction
 
 The interactions families have with their surrounding environments (i.e. their neighbourhoods) can be influenced by both the characteristics of the environment and the kinds of resources that families have. Income and financial resources can be strong determinants of the types of opportunities (e.g. housing, education, employment, etc.) families are able to access within their neighbourhoods [@resource]. With this, to better understand the concept of income across the city of Toronto’s neighbourhoods, this analysis aims to identify and determine the kinds of families that are driving average neighbourhood income levels. 
+
+Following this, the variable of interest or the estimand within this analysis is the average neighbourhood income. As income can influence the kinds of opportunities and resources families in various neighbourhoods across Toronto have access to, this analysis seeks to better understand how neighbourhood average income levels are shaped by considering the impacts of different family sizes. 
 
 This analysis can help support and inform planning decisions for individual neighbourhoods along with local and general businesses. With a better understanding of the livelihoods of families in Toronto, it may be possible to better allocate resources to the neighbourhoods that have few families that drive the average neighbourhood income. Further, planning decisions that center around effectively targeting or considering the families that drive neighbourhood income may help to strengthen the income position of various neighbourhoods or local businesses. Thus, this analysis serves as a starting point to further understand the interaction between families and neighbourhood income.  
 
