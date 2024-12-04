@@ -127,7 +127,7 @@ for_illustration |>
 
 The Neighbourhoods shapefile data contains neighbourhood names, numbers, and TSNS designations similar to the Neighbourhood Profiles data (@tbl-rawdata). It also includes geographic information (i.e. the geometry/coordinates of a neighbourhood) that defines the boundaries of each neighbourhood as shown in @tbl-mapdata.
 
-## A Note on Measurement
+## A Note on Measurement {#sec-datameasure}
 
 The Neighbourhood Profiles data is a reflection of the 2021 Census for neighbourhoods in Toronto, meaning that it measures and represents the demographic and socio-economic characteristics of families across Toronto at this particular time period. This information is collected through the use of questionnaires – a short and long-form census. The short-form census is sent out to all households, and it asks questions about simple characteristics like age, gender, and household size. With this information, the short-form census attempts to enumerate all individuals within a geographic region and may impute any missing data. The long-form census is sent out to only 25% of households and is a deeper source of data that outlines information such as housing, education, and ethnicity.
 
@@ -274,7 +274,25 @@ The initial analysis of the distribution of different census family sizes across
 
 # Discussion {#sec-discussion}
 
+## Summary 
+
+The present analysis aims to understand the kinds of families that drive average neighbourhood income in Toronto. To learn more about the families that reside in Toronto neighbourhoods, the analysis observes the distribution of different census family sizes with @fig-familysizetwo, @fig-familysizethree, and @fig-familysizefour. It also illustrates the geographic locations of Toronto families with @fig-map and @fig-map2. By constructing a multiple linear regression model that examines the relationship between average neighbourhood income and different census family sizes, the analysis provides further support for its observations and findings. 
+
+## Analysis Findings
+
+A study like the present analysis can help support planning decisions for individual neighbourhoods along with local and general businesses. The analysis finds that 2 and 4-person census families are key drivers of average neighbourhood income. 
+
+Considering the results of the model, the output shows that the baseline average neighbourhood income is approximately $125, 318 – meaning that Toronto neighbourhoods may have a healthy level of disposable income. This opens up opportunities for neighbourhoods as well as businesses. The question is, however, which neighbourhoods are more affluent and how can neighbourhoods raise the income level to become economically stronger? The answer to this can be found by looking at the impact of different census family sizes. To start, 2-person census families drive the average neighbourhood income by around $28 per family whereas 4-person homes drive income by approximately $148. While the amount of income that 2-person families contribute is smaller than that of 4-person families, the impact that 2-person families have on neighbourhood income can be just as large because this family size is most commonly found across Toronto’s neighbourhoods. Further, 3-person families are found to decrease the income by around $184, suggesting that these families may have lower incomes compared to other family sizes. 
+
+With this, organizations could use this information to make planning decisions. For instance, neighbourhoods could target 2 or 4-person census families when planning for housing in the interest of attracting families that will stimulate the economy. Additionally, local and general businesses could focus on these even-numbered families as a means of effectively promoting their products or shaping their brand. This is not to say that 3-person census families should be ignored. However, it should be noted that for every 3-person family, it takes approximately one 2-person family plus a 4-person family to make up for the decrease in average neighbourhood income. The impact of 3-person families on neighbourhood could also be mitigated by reason of the large number of 2-person families that live throughout Toronto. In short, for planning decisions in the interest of increasing a neighbourhood or business’ income position, there may be a benefit in considering the interests or need of 2 and 4-person families. 
+
+This analysis further visualizes the neighbourhoods where the most 2 and 4-person families live. Knowing the geographic regions in which the key drivers of average neighbourhood income are located can further help work towards a more equitable distribution of opportunities and resources. For example, in the neighbourhoods that have many 2 or 4-person census families, more opportunities such as higher quality schools or higher employment availability may be present and more resources could be allocated to these neighbourhoods to further support or maintain those opportunities. On the other hand, understanding where the drivers of neighbourhood income are also helps to identify the areas where there are more families such as 3-person families who are not able to contribute as much to the average neighbourhood income. By using this information, planning decisions could be made to provide these neighbourhoods with resources for better opportunities with education and employment, for example, to ensure equitable resource distributions across all Toronto neighbourhoods. 
+
 ## Limiations & Future Directions
+
+Even with the deeper understanding that this analysis brings forth, there are some limitations to consider. The model within this analysis centers around interpretability, meaning that despite seeing some evidence against its underlying assumptions, transformations were not applied to the data to resolve these diagnostic issues. As the application of transformations make it challenging to interpret coefficient estimates and what they mean in the context of the analysis, the present analysis did not engage in this step of the model building process. However, this limits the model’s ability to make more accurate predictions that capture what the average neighbourhood income would be with the addition of 2, 3, or 4-person census families to a given neighbourhood. So, findings that point to exact numbers of average neighbourhood income for different numbers of varying family sizes could not be included in the analysis. 
+
+In addition to this, the potential for error that exists within the Neighbourhood Profiles data from the 2021 Canadian Census (as briefly mentioned in @sec-datameasure) can be another limitation that hints at a compelling future direction for this analysis. As the Neighbourhood Profiles data is the aggregation of individual family or household characteristics and experiences, it can provide a better understanding of the overall picture – that is, the general patterns and trends within the city of Toronto. However, it is limited in capturing unique or individual characteristics which can be lost during its process of aggregating data. Thus, with this overall understanding about the key drivers of average neighbourhood income, future research could be focused on individual neighbourhoods (the neighbourhoods with many 4-person families, for instance). These future studies could look at how key families interact with the local resources (e.g. grocery stores, health services, etc.) available to them to understand how they contribute to their neighbourhood’s average income. It may also be interesting to examine other characteristics (e.g. education attainment, ethnicity, etc.) that might explain why 2 and 4-person families are drivers of the average income for their neighbourhoods.
 
 \newpage
 
@@ -461,6 +479,8 @@ Lastly, though the Normal Q-Q plot (@fig-normal) shows some deviation from the Q
 qqnorm(residuals_1)
 qqline(residuals_1)
 ```
+
+\newpage
 
 \newpage
 
